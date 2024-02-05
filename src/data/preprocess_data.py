@@ -1,26 +1,24 @@
-# Data Preprocessing
-
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 
-# Load the enhanced dataset
+# Load the dataset
 data_path = 'data/processed/enhanced_train_essays.csv'
 data = pd.read_csv(data_path)
 
-# No need to explicitly add 'generated' column since it's already present
-# Perform any required preprocessing steps here
-# For example, text cleaning, encoding, etc.
+# Identify categorical columns and convert them to numeric
+# Assuming 'category_column' is a placeholder for actual categorical columns
+categorical_columns = data.select_dtypes(include=['object']).columns.drop('generated')
+for col in categorical_columns:
+    le = LabelEncoder()
+    data[col] = le.fit_transform(data[col])
 
-# For the sake of example, let's assume preprocessing is done and we're ready to save
-# Save the features (without the 'generated' column) and the target variable separately
+# Optionally, drop any non-relevant columns (e.g., ID columns)
+# data = data.drop(['id_column'], axis=1)
 
-# Features - assuming preprocessing has been done and is stored in `data` variable
-features = data.drop('generated', axis=1)
-preprocessed_features_path = 'data/processed/preprocessed_train_features.csv'
-features.to_csv(preprocessed_features_path, index=False)
-
-# Target variable
+# Separate the target variable and save it separately
 target = data['generated']
-preprocessed_target_path = 'data/processed/preprocessed_train_target.csv'
-target.to_csv(preprocessed_target_path, index=False)
+features = data.drop('generated', axis=1)
 
-print("Preprocessing complete. Features and target variable saved separately.")
+# Save the preprocessed data
+features.to_csv('data/processed/preprocessed_train_features.csv', index=False)
+target.to_csv('data/processed/preprocessed_train_target.csv', index=False)
